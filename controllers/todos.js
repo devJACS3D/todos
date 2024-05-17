@@ -1,111 +1,41 @@
-import Todo from '../models/todo.js'
-import { Types } from 'mongoose'
+import Todo from '../models/todo.js';
 
 export const getTodos = async (req, res) => {
   try {
-    const data = await Todo.find({})
-    data.length !== 0
-      ? res.json({ code: 200, data })
-      : res.json({
-          code: 404,
-          message: 'Data Not Found, Try to post somthing first.',
-        })
+    const todos = await Todo.findAll();
+    res.status(200).json(todos);
   } catch (error) {
-    res.json({ code: 505, message: error.message })
+    res.status(500).json({ message: error.message });
   }
-}
+};
 
-export const getTodo = async (req, res) => {
-  const { id } = req.params
+export const createTodo = async (req, res) => {
+  const { title, completed } = req.body;
   try {
-    if (!Types.ObjectId.isValid(id))
-      return res.json({ code: 404, message: 'No post with that id.' })
-    const data = await Todo.findById(id)
-    res.json({ code: 200, data })
+    const newTodo = await Todo.create({ title, completed });
+    res.status(201).json(newTodo);
   } catch (error) {
-    res.json({ code: 505, message: error.message })
+    res.status(500).json({ message: error.message });
   }
-}
-
-export const insertTodo = async (req, res) => {
-  const todoName = req.body?.todoName
-  const isComplete = req.body?.isComplete
-
-  try {
-    if (!todoName)
-      return res.json({
-        code: 400,
-        message: 'Make sure you input the todoName object!',
-      })
-    const newTodo = await new Todo({ todoName, isComplete })
-    await newTodo.save()
-    res.json({ code: 200, data: newTodo })
-  } catch (error) {
-    res.json({ code: 505, message: error.message })
-  }
-}
+};
 
 export const updateTodo = async (req, res) => {
-  const isComplete = req.body?.isComplete
-  const id = req.params?.id
-
+  const { id } = req.params;
+  const { title, completed } = req.body;
   try {
-    if (isComplete == undefined || typeof isComplete !== 'boolean')
-      return res.json({
-        code: 400,
-        message:
-          'Make sure you input the isComplpete object and give boolean value!',
-      })
-    if (!Types.ObjectId.isValid(id))
-      return res.json({ code: 404, message: 'No post with that id.' })
-    const updateTodo = await Todo.findByIdAndUpdate(
-      id,
-      { isComplete, updatedAt: new Date().toISOString(), id },
-      { new: true }
-    )
-    res.json({ code: 200, data: updateTodo })
+    await Todo.update({ title, completed }, { where: { id } });
+    res.status(200).json({ message: 'Todo updated successfully' });
   } catch (error) {
-    res.json({ code: 505, message: error.message })
+    res.status(500).json({ message: error.message });
   }
-}
+};
 
 export const deleteTodo = async (req, res) => {
-  const id = req.params?.id
-
+  const { id } = req.params;
   try {
-    if (!Types.ObjectId.isValid(id))
-      return res.json({ code: 404, message: 'No post with that id.' })
-    await Todo.findByIdAndRemove(id)
-    res.json({ code: 200, message: 'Sucessfully deleted todo!' })
+    await Todo.destroy({ where: { id } });
+    res.status(200).json({ message: 'Todo deleted successfully' });
   } catch (error) {
-    res.json({ code: 505, message: error.message })
+    res.status(500).json({ message: error.message });
   }
-}
-
-export const getTodoByDate = async (req, res) => {
-  const date1 = req.params?.date1
-  const date2 = req.params?.date2
-  const newDate2 = new Date(date2)
-
-  try {
-    if (!date1 || !date2)
-      return res.json({
-        code: 400,
-        message: 'Make sure you input the two dates.',
-      })
-    const data = await Todo.find({
-      createdAt: {
-        $gte: new Date(date1),
-        $lte: new Date(newDate2.setDate(newDate2.getDate() + 1)),
-      },
-    })
-    data.length === 0
-      ? res.json({
-          code: 404,
-          message: `Todos Not Found at ${date1} - ${date2}`,
-        })
-      : res.json({ code: 200, data })
-  } catch (error) {
-    res.json({ code: 505, message: error.message })
-  }
-}
+};

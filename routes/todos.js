@@ -1,22 +1,11 @@
-import express from 'express'
+import express from 'express';
+import { getTodos, createTodo, updateTodo, deleteTodo } from '../controllers/todos.js';
 
-import {
-  deleteTodo,
-  getTodo,
-  getTodos,
-  insertTodo,
-  updateTodo,
-  getTodoByDate,
-} from '../controllers/todos.js'
-import { rateLimitChange, rateLimitGet } from '../middleware/ratelimit.js'
+const router = express.Router();
 
-const router = express.Router()
+router.get('/', getTodos);
+router.post('/', createTodo);
+router.put('/:id', updateTodo);
+router.delete('/:id', deleteTodo);
 
-router.get('/', rateLimitGet, getTodos)
-router.get('/:id', rateLimitGet, getTodo)
-router.post('/', rateLimitChange, insertTodo)
-router.put('/:id', rateLimitChange, updateTodo)
-router.delete('/:id', rateLimitChange, deleteTodo)
-router.get('/from/:date1/to/:date2', rateLimitGet, getTodoByDate)
-
-export default router
+export default router;

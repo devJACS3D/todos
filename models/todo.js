@@ -1,16 +1,15 @@
-import mongoose from "mongoose"
+import { DataTypes } from 'sequelize';
+import sequelize from '../config/database.js';
 
-const todoSchema = mongoose.Schema({
-  todoName: String,
-  isComplete: Boolean,
-  createdAt: {
-    type: Date,
-    default: new Date().toISOString()
+const Todo = sequelize.define('Todo', {
+  title: {
+    type: DataTypes.STRING,
+    allowNull: false
   },
-  updatedAt: {
-    type: Date,
-    default: new Date().toISOString()
+  completed: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
   }
-})
+});
 
-export default mongoose.model('Todo', todoSchema)
+export default Todo;
