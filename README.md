@@ -1,18 +1,5 @@
 # public-api-crud-todoApp
 
-This just a simple TODO API with GET, POST, PUT and DELETE endpoints. I made this with Mongoose.
-
-You can access this API for free, just in case you need a CRUD API when you currently learning a Front-End
-
-You'all can access the API URL on: https://calm-plum-jaguar-tutu.cyclic.app/todos
-
-```bash
-For this API URL
-I set rate limit 5 requests/minute for (POST, PUT, DELETE) and 2 requests/second for Get Data
-```
-
-This an example how you accessing the API and the responses you will got
-
 **#GET**
 ![image](https://user-images.githubusercontent.com/73571506/214195171-f5b304c9-2ded-49f1-9a88-d7a337609f74.png)
 
